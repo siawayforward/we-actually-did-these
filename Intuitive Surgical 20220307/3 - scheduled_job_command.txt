@@ -1,0 +1,4 @@
+# I would enter this in my crontab
+# Ideally stored where the backup jobs are running ~/var/lib/pgsql
+
+$ 00 00 * * /home/$user/db_store_dir/var/lib/backup_and_restore_db.sh
