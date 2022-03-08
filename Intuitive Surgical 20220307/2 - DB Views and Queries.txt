@@ -1,0 +1,62 @@
+# A view to autosum player points per game
+CREATE VIEW player_points_per_game AS (
+	SELECT u.id AS player_id
+	  , g.id AS game_id
+	  -- combine points scored and cost of eggs and food
+	  , SUM(g.round_points) - SUM(f.food_cost) - SUM(e.egg_value) AS points_scored
+	FROM player_game g
+	LEFT JOIN user u ON u.id = g.player_id
+	LEFT JOIN egg e ON e.egg_color = e.color
+	LEFT JOIN bird b ON b.card_id = g.card_id 
+	LEFT JOIN food_token f ON f.id = b.main_food
+	GROUP BY 1,2
+);
+
+
+# A view to autosum per player (in case I misunderstood the question)
+CREATE VIEW total_player_points AS (
+	SELECT u.id AS player_id
+	  -- combine points scored and cost of eggs and food
+	  , SUM(g.round_points) - SUM(f.food_cost) - SUM(e.egg_value) AS points_scored
+	FROM player_game g
+	LEFT JOIN user u ON u.id = g.player_id
+	LEFT JOIN egg e ON e.egg_color = e.color
+	LEFT JOIN bird b ON b.card_id = g.card_id 
+	LEFT JOIN food_token f ON f.id = b.main_food
+	GROUP BY 1
+);
+
+
+# Find the top3 fastest-speed bird associated with Wingspan, food-token and habitat(s).
+WITH bird_speeds AS (
+	SELECT b.name AS bird_name
+   	  , b.wingspan
+  	  , f.name AS food_token
+  	  , h.name AS habitat
+	  , b.speed
+	  , RANK() OVER(
+			PARTITION BY b.wingspan, f.name, h.name
+			-- from highest to lowest speed
+			ORDER BY b.speed) AS speed_rank
+	FROM bird b
+	LEFT JOIN food_token f ON f.id = b.main_food
+	LEFT JOIN habitat h ON h.id = b.final_habitat
+)
+SELECT bird_name
+  , wingspan
+  , food_token
+  , habitat
+FROM bird_speeds
+WHERE speed_rank <= 3;
+
+
+# Find duplicate birds if possible. (??? what do you mean???)
+
+
+
+# At the end of the game, calculate all credits for each player.
+-- based on the view created earlier
+SELECT game_id
+  , player_id
+  , points_scored
+FROM player_points_per_game;
