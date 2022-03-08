@@ -50,7 +50,8 @@ FROM bird_speeds
 WHERE speed_rank <= 3;
 
 
-# Find duplicate birds if possible. (??? what do you mean???)
+# Find duplicate birds if possible.
+-- DB is designed so that bird and card tables are 1:1, so there are no bird duplicates.
 
 
 
