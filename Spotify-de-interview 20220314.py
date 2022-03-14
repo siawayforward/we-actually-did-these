@@ -1,6 +1,3 @@
-from collections import Counter
-from string import punctuation
-
 """
 Given a document (string) and a sentence (string),
 determine if the sentence can be constructed from the
@@ -15,7 +12,7 @@ letters and numbers in the text document.
   out = false // no 'v's, no 'i's, not enough 'e's
 """
 
-puncs = [i for i in punctuation]
+from collections import Counter
 
 def get_sentence(document, sentence):
     # not enough characters to even evaluate, so stop
